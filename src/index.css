@@ -1,0 +1,487 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+
+:root {
+  font-family: "Geist", sans-serif;
+
+  font-optical-sizing: auto;
+  font-style: normal;
+  line-height: 1.5;
+  scroll-behavior: smooth;
+  color-scheme: light dark;
+  color: #F4F0E8;
+  background-color: var(--backgroundColor);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  --accentColor: #B85C38;
+  --backgroundColor: #0C0C0B;
+  --surfaceColor: #171716;
+  --surfaceSoft: #1E1B19;
+  --accentStrong: #D6A27F;
+  --textPrimary: #F4F0E8;
+  --textSecondary: #A89F92;
+  --textMuted: #6F675E;
+  --borderColor: rgba(148, 163, 184, 0.16);
+  --shadowColor: rgba(184, 92, 56, 0.18);
+  --vh: 100vh;
+  --vh: 100svh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Geist", sans-serif;
+}
+
+body {
+  overflow: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: var(--accentColor);
+}
+
+main {
+  opacity: 1;
+  transition: 0.3s;
+}
+
+.main-active {
+  opacity: 0;
+  animation: fadeIn 1s 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  100% {
+    opacity: 1;
+  }
+}
+
+body {
+  margin: 0;
+  height: auto;
+  background-color: #0C0C0B;
+  flex-grow: 1;
+  --cWidth: calc(100% - 30px);
+  --cMaxWidth: 1920px;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.main-body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.container-main {
+  width: 100%;
+  margin: auto;
+  position: relative;
+}
+
+.container1 {
+  width: var(--cWidth);
+  height: var(--vh);
+  margin: auto;
+  position: relative;
+}
+
+.split-line {
+  overflow: hidden;
+}
+
+.split-h2 {
+  overflow: hidden;
+  display: flex;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.techstack {
+  width: 100%;
+  position: relative;
+  overflow: clip;
+  height: var(--vh);
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: -100px;
+}
+
+.techstack h2 {
+  font-size: 80px;
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  top: 120px;
+  left: 0;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+@media screen and (min-width: 768px) {
+  body {
+    --cWidth: 94%;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .techstack h2 {
+    font-size: 40px;
+  }
+}
+.techstack-tags {
+  position: absolute;
+  left: 50%;
+  bottom: 55px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.techstack-tags span {
+  border: 1px solid rgba(184, 92, 56, 0.28);
+  background: linear-gradient(135deg, rgba(13, 20, 34, 0.92), rgba(17, 27, 45, 0.72));
+  box-shadow: 0 0 24px rgba(184, 92, 56, 0.10);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--textPrimary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media screen and (max-width: 900px) {
+  .techstack-tags {
+    width: calc(100% - 24px);
+    bottom: 24px;
+    gap: 8px;
+  }
+
+  .techstack-tags span {
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Vintage Cream Editorial Palette — from provided reference */
+:root {
+  --backgroundColor: #F9F8F6;
+  --surfaceColor: #EFE9E3;
+  --surfaceSoft: #D9CFC7;
+  --surfaceDeep: #C9B59C;
+
+  --textPrimary: #252422;
+  --textSecondary: #403D39;
+  --textMuted: #7C746C;
+
+  --accentColor: #8F765B;
+  --accentStrong: #C9B59C;
+  --accentSoft: #D9CFC7;
+
+  --borderColor: rgba(64, 61, 57, 0.16);
+  --shadowColor: rgba(64, 61, 57, 0.12);
+}
+
+html,
+body,
+.main-body,
+.container-main,
+.contact-section {
+  background: var(--backgroundColor) !important;
+  color: var(--textPrimary);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 14%, rgba(201, 181, 156, 0.26), transparent 30%),
+    radial-gradient(circle at 86% 22%, rgba(217, 207, 199, 0.38), transparent 34%),
+    radial-gradient(circle at 78% 75%, rgba(239, 233, 227, 0.64), transparent 36%),
+    linear-gradient(180deg, #F9F8F6 0%, #EFE9E3 52%, #F9F8F6 100%) !important;
+}
+
+/* premium soft paper texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.18;
+  background-image:
+    linear-gradient(rgba(64,61,57,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(64,61,57,0.018) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 76%);
+}
+
+/* clean glass header */
+.header {
+  background: rgba(249, 248, 246, 0.70) !important;
+  backdrop-filter: blur(24px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+  border-bottom: 1px solid rgba(64, 61, 57, 0.10);
+  box-shadow: 0 16px 48px rgba(64, 61, 57, 0.055);
+}
+
+.header ul li,
+.navbar-connect {
+  color: var(--textPrimary) !important;
+}
+
+.loading-screen {
+  background-color: #F9F8F6 !important;
+}
+
+.loading-header,
+.loading-marquee,
+.loading-header .loader-title {
+  color: #252422 !important;
+}
+
+.loading-button,
+.loading-wrap,
+.loading-content {
+  background: #252422 !important;
+  color: #F9F8F6 !important;
+}
+
+.loaderGame-line {
+  background-color: #252422 !important;
+}
+
+.loaderGame-ball,
+.loading-hover {
+  background-color: #C9B59C !important;
+}
+
+.nav-fade {
+  background-image: linear-gradient(0deg, transparent, rgba(249, 248, 246, 0.94) 76%) !important;
+}
+
+/* soft vintage hero atmosphere */
+.landing-section,
+.about-section,
+.career-section,
+.work-section,
+.techstack,
+.contact-section {
+  background-color: transparent !important;
+}
+
+.landing-circle1,
+.landing-circle2,
+.character-rim {
+  background:
+    radial-gradient(circle at 34% 30%, #EFE9E3, #C9B59C 44%, #8F765B 100%) !important;
+  box-shadow:
+    inset -48px 38px 56px rgba(143, 118, 91, 0.36),
+    0 0 82px rgba(201, 181, 156, 0.24),
+    0 0 140px rgba(239, 233, 227, 0.22) !important;
+}
+
+.landing-intro h2,
+.landing-info h3,
+.career-info h5,
+.contact-label,
+.navbar-title,
+.loader-title,
+.work-section .tools-label {
+  color: var(--accentColor) !important;
+}
+
+.landing-intro h1,
+.landing-info h2,
+.career-info h4,
+.career-period strong,
+.contact-profile h2,
+.contact-section h3,
+.work-section .carousel-details h4,
+.work-section .carousel-number h3,
+.techstack h2 {
+  color: var(--textPrimary) !important;
+}
+
+.work-container h2 span,
+.career-section h2 {
+  background: linear-gradient(180deg, var(--accentColor), var(--textPrimary) 82%) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.about-me p,
+.work-section .carousel-category,
+.work-section .carousel-tools p,
+.contact-section p,
+.contact-connect p,
+.contact-social {
+  color: var(--textSecondary) !important;
+}
+
+.career-timeline {
+  background-image: linear-gradient(to top, #8F765B 10%, #C9B59C 48%, transparent 96%) !important;
+}
+
+.career-dot {
+  background-color: #C9B59C !important;
+  box-shadow:
+    0 0 5px 2px rgba(201, 181, 156, 0.88),
+    0 0 18px 8px rgba(143, 118, 91, 0.20),
+    0 0 90px 18px rgba(239, 233, 227, 0.30) !important;
+}
+
+.carousel-track-container,
+.contact-open-grid,
+.work-showcase {
+  border-color: rgba(64, 61, 57, 0.14) !important;
+}
+
+.carousel-image,
+.carousel-image-wrapper,
+.work-image-in,
+.loading-button,
+.loading-wrap {
+  border-color: rgba(143, 118, 91, 0.20) !important;
+}
+
+.work-image-in {
+  background: linear-gradient(135deg, rgba(239, 233, 227, 0.78), rgba(217, 207, 199, 0.52)) !important;
+  box-shadow: 0 24px 72px rgba(64, 61, 57, 0.14), 0 0 0 1px rgba(255,255,255,0.52) !important;
+}
+
+.work-section .carousel-arrow {
+  background: rgba(239, 233, 227, 0.72) !important;
+  border: 1px solid rgba(64, 61, 57, 0.14) !important;
+  color: var(--textPrimary) !important;
+}
+
+.work-section .carousel-arrow:hover {
+  background: rgba(201, 181, 156, 0.30) !important;
+  border-color: rgba(143, 118, 91, 0.42) !important;
+  color: var(--accentColor) !important;
+}
+
+.work-section .carousel-dot {
+  border-color: rgba(64, 61, 57, 0.30) !important;
+}
+
+.work-section .carousel-dot-active {
+  background: var(--accentColor) !important;
+  border-color: var(--accentColor) !important;
+  box-shadow: 0 0 14px rgba(143, 118, 91, 0.26) !important;
+}
+
+.techstack-tags span {
+  border: 1px solid rgba(64, 61, 57, 0.13) !important;
+  background: linear-gradient(135deg, rgba(239,233,227,0.90), rgba(217,207,199,0.74)) !important;
+  box-shadow: 0 14px 42px rgba(64, 61, 57, 0.065) !important;
+  color: var(--textPrimary) !important;
+}
+
+.contact-open-grid {
+  background: linear-gradient(180deg, rgba(239, 233, 227, 0.42), rgba(249, 248, 246, 0.20)) !important;
+}
+
+.resume-btn,
+.resume-text {
+  color: var(--textPrimary) !important;
+}
+
+a:hover,
+.contact-social:hover {
+  color: var(--accentColor) !important;
+}
+
+
+/* Final open header fix — remove navbar card completely */
+.header {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  max-width: none !important;
+  width: 100% !important;
+  left: 0 !important;
+  transform: none !important;
+  padding-left: clamp(22px, 4vw, 76px) !important;
+  padding-right: clamp(22px, 4vw, 76px) !important;
+}
+
+.header ul li,
+.navbar-connect {
+  color: #252422 !important;
+}
+
+.navbar-title {
+  color: #8F765B !important;
+}
+
+.nav-fade {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+
+/* Header overlap fix — keep nav open, but reserve clean top air */
+.landing-section {
+  padding-top: clamp(92px, 9vh, 128px) !important;
+  min-height: 100vh !important;
+}
+
+.landing-container {
+  padding-top: 0 !important;
+}
+
+/* make sure hero text never starts under the fixed nav */
+.landing-intro,
+.landing-info {
+  transform: translateY(16px);
+}
+
+@media only screen and (max-width: 900px) {
+  .header {
+    padding-top: 20px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .landing-section {
+    padding-top: 92px !important;
+  }
+
+  .landing-intro,
+  .landing-info {
+    transform: none;
+  }
+}
