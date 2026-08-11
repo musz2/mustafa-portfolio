@@ -53,7 +53,9 @@ const Scene = () => {
 
       const light = setLighting(scene);
       const progress = setProgress((value) => setLoading(value));
-      const { loadCharacter } = setCharacter(renderer, scene, camera);
+      const { loadCharacter } = setCharacter(renderer, scene, camera, (pct) =>
+        progress.report(pct)
+      );
 
       loadCharacter().then((gltf) => {
         if (gltf) {
@@ -65,10 +67,11 @@ const Scene = () => {
           headBone = character.getObjectByName("spine006") || null;
           screenLight = character.getObjectByName("screenlight") || null;
           progress.loaded().then(() => {
+            // Was 2500ms of dead time after the bar already showed 100%.
             setTimeout(() => {
               light.turnOnLights();
               animations.startIntro();
-            }, 2500);
+            }, 600);
           });
           onResize = () => handleResize(renderer, camera, canvasDiv, character);
           window.addEventListener("resize", onResize);

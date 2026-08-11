@@ -3,10 +3,12 @@ import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
 import { setCharTimeline, setAllTimeline } from "../../utils/GsapScroll";
 import { decryptFile } from "./decrypt";
 
+/** Phase weights: the 2.2MB download dominates, then decrypt, parse, compile. */
 const setCharacter = (
   renderer: THREE.WebGLRenderer,
   scene: THREE.Scene,
-  camera: THREE.PerspectiveCamera
+  camera: THREE.PerspectiveCamera,
+  onProgress?: (percent: number) => void
 ) => {
   const loader = new GLTFLoader();
   const dracoLoader = new DRACOLoader();
@@ -18,8 +20,10 @@ const setCharacter = (
       try {
         const encryptedBlob = await decryptFile(
           "/models/character.enc?v=2",
-          "MyCharacter12"
+          "MyCharacter12",
+          (fraction) => onProgress?.(fraction * 72)
         );
+        onProgress?.(78);
         const blobUrl = URL.createObjectURL(new Blob([encryptedBlob]));
 
         let character: THREE.Object3D;
@@ -27,7 +31,15 @@ const setCharacter = (
           blobUrl,
           async (gltf) => {
             character = gltf.scene;
-            await renderer.compileAsync(character, camera, scene);
+            onProgress?.(88);
+            // compileAsync can hang where parallel shader compilation is not
+            // supported (software rendering), which would strand the loader.
+            // Shaders still compile lazily on first render, so proceed anyway.
+            await Promise.race([
+              renderer.compileAsync(character, camera, scene),
+              new Promise((resolveRace) => setTimeout(resolveRace, 8000)),
+            ]);
+            onProgress?.(97);
             character.traverse((child: any) => {
               if (child.isMesh) {
                 const mesh = child as THREE.Mesh;
@@ -60,7 +72,12 @@ const setCharacter = (
 
             dracoLoader.dispose();
           },
-          undefined,
+          (event) => {
+            // Blob parse/draco decode: nudges 78 -> 88 while the GLTF is read.
+            if (event.total) {
+              onProgress?.(78 + Math.min(event.loaded / event.total, 1) * 10);
+            }
+          },
           (error) => {
             console.error("Error loading GLTF model:", error);
             reject(error);

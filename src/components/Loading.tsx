@@ -10,14 +10,22 @@ const Loading = ({ percent }: { percent: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [clicked, setClicked] = useState(false);
 
-  if (percent >= 100) {
-    setTimeout(() => {
+  // Was scheduled straight from the render body, so every re-render at 100%
+  // queued another pair of timers.
+  useEffect(() => {
+    if (percent < 100) return;
+
+    let inner: number | undefined;
+    const outer = setTimeout(() => {
       setLoaded(true);
-      setTimeout(() => {
-        setIsLoaded(true);
-      }, 1000);
-    }, 600);
-  }
+      inner = setTimeout(() => setIsLoaded(true), 700);
+    }, 400);
+
+    return () => {
+      clearTimeout(outer);
+      clearTimeout(inner);
+    };
+  }, [percent]);
 
   useEffect(() => {
     import("./utils/initialFX").then((module) => {
@@ -92,44 +100,44 @@ const Loading = ({ percent }: { percent: number }) => {
 
 export default Loading;
 
+/** Reports genuine asset-load progress.
+ *
+ *  This used to be a simulation: it raced to ~50%, then crawled at roughly
+ *  +0.5% every 2 seconds regardless of what had actually loaded, so a fast
+ *  connection still sat through up to ~80s of invented waiting. It is now fed
+ *  by real bytes and real pipeline phases from the character loader.
+ *
+ *  The displayed number eases toward the reported target so it reads smoothly
+ *  instead of jumping, and it never moves backwards. */
 export const setProgress = (setLoading: (value: number) => void) => {
-  let percent: number = 0;
+  let shown = 0;
+  let done = false;
 
-  let interval = setInterval(() => {
-    if (percent <= 50) {
-      const rand = Math.round(Math.random() * 5);
-      percent = percent + rand;
-      setLoading(percent);
-    } else {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        percent = percent + Math.round(Math.random());
-        setLoading(percent);
-        if (percent > 91) {
-          clearInterval(interval);
-        }
-      }, 2000);
-    }
-  }, 100);
+  /** Fed by real download bytes and pipeline phases. Monotonic, and it only
+   *  pushes state when the whole number actually changes, so loading does not
+   *  re-render React on every chunk. */
+  function report(value: number) {
+    if (done) return;
+    const next = Math.min(Math.round(value), 99);
+    if (next <= shown) return;
+    shown = next;
+    setLoading(shown);
+  }
 
-  function clear() {
-    clearInterval(interval);
+  function finish() {
+    done = true;
+    shown = 100;
     setLoading(100);
   }
 
-  function loaded() {
-    return new Promise<number>((resolve) => {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        if (percent < 100) {
-          percent++;
-          setLoading(percent);
-        } else {
-          resolve(percent);
-          clearInterval(interval);
-        }
-      }, 2);
-    });
+  function clear() {
+    finish();
   }
-  return { loaded, percent, clear };
+
+  function loaded() {
+    finish();
+    return Promise.resolve(100);
+  }
+
+  return { loaded, report, clear };
 };
