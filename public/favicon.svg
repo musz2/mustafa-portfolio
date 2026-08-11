@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SMA">
+  <defs>
+    <linearGradient id="sma-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F9F8F6"/>
+      <stop offset="55%" stop-color="#EFE9E3"/>
+      <stop offset="100%" stop-color="#D9CFC7"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#sma-bg)"/>
+  <rect x="3" y="3" width="122" height="122" rx="27.5" fill="none" stroke="#8F765B" stroke-opacity="0.34" stroke-width="2.5"/>
+  <text
+    x="64"
+    y="65"
+    fill="#252422"
+    font-family="Geist, 'Helvetica Neue', Helvetica, Arial, sans-serif"
+    font-size="41"
+    font-weight="600"
+    letter-spacing="-1.6"
+    text-anchor="middle"
+    dominant-baseline="central"
+  >SMA</text>
+  <rect x="41" y="92" width="46" height="5" rx="2.5" fill="#8F765B"/>
+</svg>
