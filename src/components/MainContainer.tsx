@@ -16,6 +16,7 @@ import SocialIcons from "./SocialIcons";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
+import { onViewportResize } from "./utils/viewport";
 
 const TechStack = lazy(() => import("./TechStack"));
 
@@ -58,16 +59,17 @@ const MainContainer = ({ children }: PropsWithChildren) => {
   );
 
   useEffect(() => {
-    const resizeHandler = () => {
+    setSplitText();
+    setIsDesktopView(window.innerWidth > 1024);
+
+    // Re-splitting every paragraph on each raw resize event was the single
+    // biggest source of mobile scroll stutter, because the address bar fires
+    // resize continuously. Only genuine layout changes rebuild now.
+    return onViewportResize(() => {
       setSplitText();
       setIsDesktopView(window.innerWidth > 1024);
-    };
-    resizeHandler();
-    window.addEventListener("resize", resizeHandler);
-    return () => {
-      window.removeEventListener("resize", resizeHandler);
-    };
-  }, [isDesktopView]);
+    });
+  }, []);
 
   return (
     <div className="container-main">

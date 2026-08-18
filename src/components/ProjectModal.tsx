@@ -147,7 +147,7 @@ const ProjectModal = ({ project, onClose }: Props) => {
             <div className="pm-actions">
               {project.live ? (
                 <a
-                  className="pr-btn pr-btn-solid"
+                  className="btn btn-solid"
                   href={project.live}
                   target="_blank"
                   rel="noreferrer"
@@ -156,12 +156,12 @@ const ProjectModal = ({ project, onClose }: Props) => {
                   Live <MdArrowOutward />
                 </a>
               ) : (
-                <span className="pr-note">{project.liveNote}</span>
+                <span className="btn-note">{project.liveNote}</span>
               )}
 
               {project.repo && (
                 <a
-                  className="pr-btn"
+                  className="btn"
                   href={project.repo}
                   target="_blank"
                   rel="noreferrer"

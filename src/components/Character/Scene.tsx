@@ -4,6 +4,7 @@ import setCharacter from "./utils/character";
 import setLighting from "./utils/lighting";
 import { useLoading } from "../../context/LoadingProvider";
 import handleResize from "./utils/resizeUtils";
+import { onViewportResize } from "../utils/viewport";
 import {
   handleMouseMove,
   handleTouchEnd,
@@ -73,12 +74,15 @@ const Scene = () => {
               animations.startIntro();
             }, 600);
           });
-          onResize = () => handleResize(renderer, camera, canvasDiv, character);
-          window.addEventListener("resize", onResize);
+          // handleResize kills and rebuilds every ScrollTrigger, so it must
+          // never run on a bare address-bar height change.
+          stopResize = onViewportResize(() =>
+            handleResize(renderer, camera, canvasDiv, character)
+          );
         }
       });
 
-      let onResize: (() => void) | null = null;
+      let stopResize: (() => void) | null = null;
 
       let mouse = { x: 0, y: 0 },
         interpolation = { x: 0.1, y: 0.2 };
@@ -152,9 +156,7 @@ const Scene = () => {
         visibility.disconnect();
         scene.clear();
         renderer.dispose();
-        // These previously removed freshly-created arrow functions, so the
-        // listeners were never actually detached.
-        if (onResize) window.removeEventListener("resize", onResize);
+        stopResize?.();
         document.removeEventListener("mousemove", onMouseMove);
         if (canvasNode.contains(renderer.domElement)) {
           canvasNode.removeChild(renderer.domElement);

@@ -21,29 +21,16 @@
   position: fixed;
   width: 300px;
   height: 300px;
-  background-color: #B85C38;
-  box-shadow: inset -50px 40px 50px rgba(0, 180, 180, 0.6);
-  filter: blur(60px);
+  background-color: var(--surface-3);
+  box-shadow: inset -50px 40px 50px rgba(11, 11, 12, 0.14);
+  filter: blur(70px);
+  opacity: 0.55;
   border-radius: 50%;
   /* Promote to its own layer so the blur is rasterised once and the animation
      is a pure compositor transform instead of a full-page repaint each frame. */
   will-change: transform;
   contain: paint;
   animation: loadingCircle 5s linear infinite;
-}
-
-.nav-fade {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 130px;
-  background-image: linear-gradient(0deg,
-      transparent,
-      var(--backgroundColor) 70%);
-  pointer-events: none;
-  z-index: 12;
-  opacity: 0;
-  left: 0;
 }
 
 @keyframes loadingCircle {
@@ -65,10 +52,13 @@
   display: none;
   width: 300px;
   height: 300px;
-  background-color: #B85C38;
-  box-shadow: inset -50px 40px 50px rgba(0, 180, 180, 0.6);
-  filter: blur(50px);
+  background-color: var(--surface-3);
+  box-shadow: inset -50px 40px 50px rgba(11, 11, 12, 0.12);
+  filter: blur(60px);
+  opacity: 0.5;
   border-radius: 50%;
+  will-change: transform;
+  contain: paint;
   animation: loadingCircle2 5s linear infinite;
 }
 
@@ -98,10 +88,10 @@
   width: 400px;
   height: 400px;
   z-index: 1;
-  background-color: #B85C38;
+  background-color: var(--surface-2);
   transform: translate(-50%, 36%) scaleX(1.4);
-  box-shadow: inset 66px 35px 85px 0px rgba(0, 180, 180, 0.65);
-  filter: blur(50px);
+  box-shadow: inset 66px 35px 85px 0px rgba(11, 11, 12, 0.1);
+  filter: blur(56px);
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -181,7 +171,7 @@
 
 .landing-intro h2 {
   margin: 0;
-  color: var(--accentColor);
+  color: var(--labelColor);
   font-size: 22px;
   font-weight: 300;
   letter-spacing: 2px;
@@ -213,7 +203,7 @@
   font-size: 22px;
   letter-spacing: 2px;
   font-weight: 300;
-  color: var(--accentColor);
+  color: var(--labelColor);
   margin: 0;
 }
 
@@ -238,7 +228,7 @@
 }
 
 h2.landing-info-h2 {
-  color: #D6A27F;
+  color: var(--textPrimary);
   font-size: 42px;
   width: 120%;
   margin: 0;
@@ -397,5 +387,72 @@ h2.landing-info-h2 {
 
   h2.landing-info-h2 {
     font-size: 75px;
+  }
+}
+/* ── Mobile: keep hero copy clear of the fixed header and the side rail ──
+   The intro is absolutely positioned, so on short viewports it can slide
+   under the nav. These offsets reserve that air without touching the
+   desktop composition. */
+@media screen and (max-width: 1024px) {
+  .landing-intro {
+    top: max(14%, 104px);
+    padding-right: 12px;
+  }
+
+  .landing-info {
+    bottom: 72px;
+  }
+
+  .landing-info h2 {
+    margin-left: 12px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .landing-intro {
+    top: max(13%, 96px);
+  }
+
+  .landing-intro h1 {
+    letter-spacing: 1px;
+  }
+
+  .landing-info {
+    bottom: 64px;
+    left: 0;
+    right: auto;
+    transform: none;
+  }
+
+  .landing-info h2 {
+    margin-left: 0;
+    letter-spacing: 1px;
+  }
+
+  h2.landing-info-h2 {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Very small phones (320px): the two stacked display lines are the only
+   things that can overflow, so cap them explicitly. */
+@media screen and (max-width: 360px) {
+  .landing-intro h1 {
+    font-size: 26px;
+    line-height: 26px;
+  }
+
+  .landing-info h2,
+  h2.landing-info-h2 {
+    font-size: 30px;
+    line-height: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-circle1,
+  .landing-circle2 {
+    animation: none;
   }
 }

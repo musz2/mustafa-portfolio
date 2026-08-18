@@ -53,7 +53,7 @@ const Contact = () => {
               GitHub <MdArrowOutward />
             </a>
             <a
-              href="https://linkedin.com/in/mustafa28"
+              href="https://www.linkedin.com/in/musz2/"
               target="_blank"
               rel="noreferrer"
               data-cursor="disable"

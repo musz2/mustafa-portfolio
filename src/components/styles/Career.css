@@ -17,11 +17,12 @@
   line-height: 70px;
   font-weight: 400;
   text-align: center;
-  background: linear-gradient(0deg, #D6A27F, #F4F0E8);
+  background: linear-gradient(0deg, var(--ink-3), var(--ink) 78%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  letter-spacing: -0.035em;
   margin-top: 50px;
   margin-bottom: 90px;
 }
@@ -49,6 +50,8 @@
   width: 40%;
   font-size: 18px;
   font-weight: 300;
+  line-height: 1.6;
+  color: var(--textSecondary);
   margin: 0;
 }
 
@@ -81,7 +84,7 @@
   font-weight: 500;
   line-height: 0.9;
   letter-spacing: -1.5px;
-  color: #F4F0E8;
+  color: var(--textPrimary);
 }
 
 .career-period span {
@@ -92,7 +95,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--accentColor);
+  color: var(--labelColor);
 }
 
 .career-info h4 {
@@ -109,7 +112,7 @@
   font-size: 20px;
   text-transform: capitalize;
   margin: 10px 0px;
-  color: var(--accentColor);
+  color: var(--textMuted);
 }
 
 .career-timeline {
@@ -120,9 +123,9 @@
   width: 3px;
   height: 100%;
   background-image: linear-gradient(to top,
-      #D6A27F 20%,
-      var(--accentColor) 50%,
-      transparent 95%);
+      var(--ink) 16%,
+      var(--ink-3) 52%,
+      transparent 96%);
   max-height: 0%;
 }
 
@@ -131,12 +134,12 @@
   bottom: 0;
   left: 50%;
   transform: translate(-50%, 50%);
-  background-color: #D6A27F;
+  background-color: var(--ink);
   width: 10px;
   height: 10px;
   border-radius: 50px;
-  box-shadow: 0px 0px 5px 2px #B85C38, 0px 0px 15px 8px #B85C38,
-    0px 0px 110px 20px #B85C38;
+  box-shadow: 0px 0px 5px 2px rgba(11, 11, 12, 0.22), 0px 0px 14px 5px rgba(11, 11, 12, 0.14),
+    0px 0px 26px 7px rgba(11, 11, 12, 0.10);
   animation: timeline 0.8s linear infinite forwards;
 }
 
@@ -147,7 +150,7 @@
   50%,
   70%,
   90% {
-    box-shadow: 0px 0px 5px 2px #B85C38;
+    box-shadow: 0px 0px 5px 2px rgba(11, 11, 12, 0.22);
   }
 
   10%,
@@ -156,19 +159,19 @@
   100%,
   64%,
   80% {
-    box-shadow: 0px 0px 5px 2px #B85C38, 0px 0px 15px 5px #B85C38,
-      0px 0px 110px 20px #B85C38;
+    box-shadow: 0px 0px 5px 2px rgba(11, 11, 12, 0.22), 0px 0px 14px 5px rgba(11, 11, 12, 0.14),
+      0px 0px 26px 7px rgba(11, 11, 12, 0.10);
   }
 }
 
 @keyframes timeline2 {
   0% {
-    box-shadow: 0px 0px 5px 2px #B85C38;
+    box-shadow: 0px 0px 5px 2px rgba(11, 11, 12, 0.22);
   }
 
   100% {
-    box-shadow: 0px 0px 5px 2px #B85C38, 0px 0px 15px 5px #B85C38,
-      0px 0px 110px 20px #B85C38;
+    box-shadow: 0px 0px 5px 2px rgba(11, 11, 12, 0.22), 0px 0px 14px 5px rgba(11, 11, 12, 0.14),
+      0px 0px 26px 7px rgba(11, 11, 12, 0.10);
   }
 }
 
@@ -180,8 +183,8 @@
 
   .career-info h4 {
     font-size: 22px;
-    line-height: 24px;
-    width: 180px;
+    line-height: 26px;
+    max-width: 260px;
   }
 
   .career-info h5 {
@@ -289,5 +292,36 @@
     align-items: start;
     place-items: inherit;
     justify-content: left;
+  }
+}
+
+/* ── Mobile ── */
+@media only screen and (max-width: 600px) {
+  .career-info h4 {
+    font-size: clamp(19px, 5.2vw, 22px);
+    line-height: 1.18;
+    max-width: none;
+    letter-spacing: -0.01em;
+  }
+
+  .career-info h5 {
+    font-size: 15px;
+    margin: 8px 0 0;
+  }
+
+  .career-info-box p {
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .career-info-box {
+    margin-bottom: 54px;
+  }
+
+  /* The rail sits at left:0, so the copy needs a fixed gutter rather than a
+     percentage that collapses at 320px. */
+  .career-info-in,
+  .career-info-box p {
+    padding-left: 26px;
   }
 }

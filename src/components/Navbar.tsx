@@ -4,6 +4,7 @@ import HoverLinks from "./HoverLinks";
 import { gsap } from "gsap";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import "./styles/Navbar.css";
+import { onViewportResize } from "./utils/viewport";
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 export let smoother: ScrollSmoother;
@@ -24,21 +25,32 @@ const Navbar = () => {
     smoother.scrollTop(0);
     smoother.paused(true);
 
-    const links = document.querySelectorAll(".header ul a");
-    links.forEach((elem) => {
-      const element = elem as HTMLAnchorElement;
-      element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
-          e.preventDefault();
-          const elem = e.currentTarget as HTMLAnchorElement;
-          const section = elem.getAttribute("data-href");
-          smoother.scrollTo(section, true, "top top");
-        }
-      });
-    });
-    window.addEventListener("resize", () => {
-      ScrollSmoother.refresh(true);
-    });
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".header ul a")
+    );
+
+    // ScrollSmoother only drives the scroll on pointer-fine viewports; below
+    // that the page scrolls natively, so let the anchor do its own work.
+    const onLinkClick = (e: MouseEvent) => {
+      if (window.innerWidth <= 1024) return;
+      e.preventDefault();
+      const target = e.currentTarget as HTMLAnchorElement;
+      const section = target.getAttribute("data-href");
+      if (section) smoother.scrollTo(section, true, "top top");
+    };
+
+    links.forEach((element) => element.addEventListener("click", onLinkClick));
+
+    // Was an undebounced, never-removed listener that forced a full smoother
+    // refresh on every address-bar move.
+    const stopResize = onViewportResize(() => ScrollSmoother.refresh(true));
+
+    return () => {
+      links.forEach((element) =>
+        element.removeEventListener("click", onLinkClick)
+      );
+      stopResize();
+    };
   }, []);
   return (
     <>

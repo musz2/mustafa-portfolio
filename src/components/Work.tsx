@@ -3,12 +3,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./styles/Work.css";
 import { projects, type Project } from "../data/projects";
-import ProjectRow from "./ProjectRow";
+import ProjectCard from "./ProjectCard";
 import ProjectModal from "./ProjectModal";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const [flagship, aurora, jsam, ...compact] = projects;
+const [featured, aurora, jsam, ...secondary] = projects;
 
 const Work = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -18,50 +18,48 @@ const Work = () => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>("[data-project-row]").forEach((row) => {
-        const frame = row.querySelector<HTMLElement>("[data-reveal]");
-        const image = row.querySelector<HTMLElement>(".pr-media-img");
+      gsap.fromTo(
+        "[data-work-head] > *",
+        { y: 24, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.8,
+          stagger: 0.07,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "[data-work-head]",
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
 
-        // Entrance: transform + opacity only, and it runs once.
+      gsap.utils.toArray<HTMLElement>("[data-project-card]").forEach((card) => {
+        const frame = card.querySelector<HTMLElement>("[data-reveal]");
+
+        // Entrance is transform + opacity only, and runs once.
         gsap.fromTo(
-          row,
+          card,
           { y: 40, autoAlpha: 0 },
           {
             y: 0,
             autoAlpha: 1,
-            duration: 0.9,
+            duration: 0.85,
             ease: "power3.out",
-            scrollTrigger: { trigger: row, start: "top 85%", once: true },
+            scrollTrigger: { trigger: card, start: "top 88%", once: true },
           }
         );
 
         if (frame) {
           gsap.fromTo(
             frame,
-            { clipPath: "inset(14% 8% 14% 8% round 18px)" },
+            { clipPath: "inset(9% 5% 9% 5% round 16px)" },
             {
-              clipPath: "inset(0% 0% 0% 0% round 18px)",
-              duration: 1.15,
+              clipPath: "inset(0% 0% 0% 0% round 16px)",
+              duration: 1.1,
               ease: "power3.out",
-              scrollTrigger: { trigger: row, start: "top 85%", once: true },
-            }
-          );
-        }
-
-        // Parallax rides GSAP's single ticker via scrub — no extra rAF loop.
-        if (image) {
-          gsap.fromTo(
-            image,
-            { yPercent: 0 },
-            {
-              yPercent: -8,
-              ease: "none",
-              scrollTrigger: {
-                trigger: row,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
+              scrollTrigger: { trigger: card, start: "top 88%", once: true },
             }
           );
         }
@@ -75,52 +73,62 @@ const Work = () => {
   const closeProject = useCallback(() => setActive(null), []);
 
   return (
-    <div className="work-section" id="work" ref={sectionRef}>
+    <section className="work-section" id="work" ref={sectionRef}>
       <div className="work-container section-container">
-        <header className="work-head">
+        <header className="work-head" data-work-head>
+          <span className="section-label">Selected work</span>
           <h2>
-            Selected <span>Work</span>
+            Things I have
+            <br />
+            built and shipped
           </h2>
-          <p>Systems, products &amp; experiences I've built.</p>
+          <p>
+            Products, platforms and infrastructure taken end to end — desktop
+            apps and Node services through to storefronts and multi-platform
+            release pipelines.
+          </p>
         </header>
 
-        <ProjectRow
-          project={flagship}
+        <ProjectCard
+          project={featured}
           index={0}
-          variant="flagship"
+          variant="featured"
           onOpen={openProject}
         />
 
-        <ProjectRow
+        <ProjectCard
           project={aurora}
           index={1}
-          variant="wide"
+          variant="showcase"
           onOpen={openProject}
         />
 
-        <ProjectRow
+        <ProjectCard
           project={jsam}
           index={2}
-          variant="wide"
+          variant="showcase"
           mirrored
           onOpen={openProject}
         />
 
-        <div className="work-pair">
-          {compact.map((project, i) => (
-            <ProjectRow
-              key={project.id}
-              project={project}
-              index={i + 3}
-              variant="compact"
-              onOpen={openProject}
-            />
-          ))}
+        <div className="work-secondary">
+          <span className="section-label">Also built</span>
+          <div className="work-grid">
+            {secondary.map((project, i) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                index={i + 3}
+                variant="compact"
+                onOpen={openProject}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       {active && <ProjectModal project={active} onClose={closeProject} />}
-    </div>
+    </section>
   );
 };
 
