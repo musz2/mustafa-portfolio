@@ -395,7 +395,11 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 26%;
+  /* The subject sits right of centre and the role label is right-aligned, as
+     in the reference — where the subject is on the left, so the two never
+     meet. Biasing the crop to the right edge spends the dead grey on the
+     left to move him clear of the label instead. */
+  object-position: 100% 26%;
   position: absolute;
   left: 0;
   top: 0;
@@ -460,11 +464,19 @@ main {
 
 .home-header .container {
   width: 100%;
-  padding-bottom: 15vh;
+  /* Lifts the role label clear of the location pill, which is pinned to the
+     vertical centre — see the note on .row below. */
+  padding-bottom: 43vh;
 }
 
+/* The reference right-aligns this label because its subject sits on the left.
+   Mine sits right of centre at every width — and on wide viewports the photo
+   covers by width, so no amount of re-cropping moves him out from under it.
+   Mirroring the label to the empty left side keeps the reference's
+   composition (label and arrow opposite the subject, pointing into the name)
+   and is the only placement that stays clear from 1280 through 2560. */
 .home-header .row {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .home-header .row .flex-col {
@@ -1565,6 +1577,17 @@ main {
   background: var(--color-light);
 }
 
+/* The globe straddles the stripe below the header. This headline wraps to
+   three lines on a narrow screen where the reference's wraps to two, so its
+   last line ran into the top of the ball. Clear it with headline margin
+   rather than resizing the ball, so the component still matches the
+   reference at every width. */
+@media screen and (max-width: 720px) {
+  .about-header h1 {
+    margin-bottom: 2.25rem;
+  }
+}
+
 .about-image {
   padding-top: calc(var(--section-padding) * 0.75);
   padding-bottom: 0;
@@ -1655,6 +1678,15 @@ main {
 
   .single-about-image::before {
     padding-top: 125%;
+  }
+
+  /* The portrait parallaxes by 9vh, which is more overshoot than the 12%
+     the desktop frame allows once the frame itself is this short — it ran
+     past the crop and left the shot sitting on his feet. Give the overlay
+     enough headroom that the full throw stays inside the intended crop. */
+  .single-about-image .overlay-image {
+    top: -20%;
+    height: 140%;
   }
 }
 

@@ -36,14 +36,19 @@ export function initSmoothScroll() {
   };
 }
 
+/* The loader locks the page before Lenis exists, so the class and the Lenis
+   instance have to be driven together — locking one way and releasing the
+   other left `is-locked` (and its `overflow: hidden`) stuck on the body.
+   Desktop never noticed, because Lenis scrolls programmatically; touch
+   devices scroll natively and were frozen by it. */
 export const stopScroll = () => {
-  if (lenis) lenis.stop();
-  else document.body.classList.add("is-locked");
+  lenis?.stop();
+  document.body.classList.add("is-locked");
 };
 
 export const startScroll = () => {
-  if (lenis) lenis.start();
-  else document.body.classList.remove("is-locked");
+  lenis?.start();
+  document.body.classList.remove("is-locked");
 };
 
 export const scrollToTop = () => {
