@@ -1639,15 +1639,19 @@ main {
 .single-about-image::before {
   content: "";
   display: block;
-  padding-top: 135%;
+  /* 3:4, the photograph's own ratio. The frame used to be taller than the
+     shot, so the file had to be cut to a narrow slice of it and blown back
+     up — which is what left the tower facade looking crushed. Matching the
+     ratio lets the full width of the original carry the frame. */
+  padding-top: 133.333%;
 }
 
 .single-about-image .overlay-image {
-  /* The file is already cut to this frame's ratio, so it just covers. */
+  /* Same ratio as the frame, so it covers exactly with nothing to spare. */
   background: url("/images/mustafa-portrait.webp") center center no-repeat;
   background-size: cover;
-  top: -12%;
-  height: 124%;
+  top: 0;
+  height: 100%;
 }
 
 @media screen and (max-width: 840px) {
@@ -1680,14 +1684,6 @@ main {
     padding-top: 125%;
   }
 
-  /* The portrait parallaxes by 9vh, which is more overshoot than the 12%
-     the desktop frame allows once the frame itself is this short — it ran
-     past the crop and left the shot sitting on his feet. Give the overlay
-     enough headroom that the full throw stays inside the intended crop. */
-  .single-about-image .overlay-image {
-    top: -20%;
-    height: 140%;
-  }
 }
 
 @media screen and (max-width: 540px) {

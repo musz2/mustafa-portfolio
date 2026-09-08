@@ -123,6 +123,12 @@ body {
 
 html {
   scroll-behavior: auto;
+  /* `clip` guards the same stray horizontal overflow as `hidden` without
+     turning the root into a scroll container. `hidden` here (or on <body>)
+     is what leaves iOS Safari unable to move the page with one finger —
+     the gesture goes to a container that has nothing to scroll, while a
+     two-finger pinch-pan still moves the visual viewport. */
+  overflow-x: clip;
 }
 
 body {
@@ -132,9 +138,12 @@ body {
   font-weight: 400;
   font-style: normal;
   font-size: clamp(16px, 1.2vw, 19px);
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
+/* The lock rides on both elements: Safari only honours the viewport
+   propagation reliably when the root carries it too. */
+html.is-locked,
 body.is-locked {
   overflow: hidden;
 }

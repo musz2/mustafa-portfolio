@@ -27,11 +27,17 @@ export function RouterProvider({ children }: PropsWithChildren) {
   const [path, setPath] = useState(() => normalise(window.location.pathname));
   const [transitionLabel, setTransitionLabel] = useState("Home");
   const busy = useRef(false);
+  /* `go` is created once, so the path it compares against lives in a ref.
+     A popstate that lands on the page already showing (Safari fires them on
+     restore) has to bail here: the curtain locks scrolling on the way in and
+     only the incoming page's transition releases it, so a navigation that
+     never changes the route would leave the lock on for good. */
+  const current = useRef(path);
 
   const go = useCallback(async (to: string, label: string, push: boolean) => {
     const next = normalise(to);
     if (busy.current) return;
-    if (next === normalise(window.location.pathname) && push) return;
+    if (next === current.current) return;
 
     busy.current = true;
     setTransitionLabel(label);
@@ -42,6 +48,7 @@ export function RouterProvider({ children }: PropsWithChildren) {
     await delay(495);
 
     if (push) window.history.pushState({}, "", next);
+    current.current = next;
     setPath(next);
     scrollToTop();
     busy.current = false;

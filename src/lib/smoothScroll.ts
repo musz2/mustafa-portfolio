@@ -1,5 +1,5 @@
 import Lenis from "lenis";
-import { gsap, ScrollTrigger, prefersReducedMotion } from "./gsap";
+import { gsap, ScrollTrigger, isTouch, prefersReducedMotion } from "./gsap";
 
 let lenis: Lenis | null = null;
 let rafId = 0;
@@ -7,9 +7,18 @@ let rafId = 0;
 /**
  * One Lenis instance for the whole app, driven by GSAP's ticker so that
  * smoothing and every ScrollTrigger share a single frame.
+ *
+ * Pointer devices only. Lenis is configured without `syncTouch`, so on a
+ * phone it smooths nothing — touch already scrolls natively — but it still
+ * binds non-passive `touchmove` listeners that call `preventDefault()` for
+ * as long as it is stopped or locked. One stop that never gets released
+ * (an interrupted page transition, a nav that closes mid-animation) and the
+ * page can no longer be moved with a thumb, while a two-finger pinch-pan
+ * still works because the browser drives that above the event stream.
+ * Nothing is lost by leaving touch scrolling to the platform.
  */
 export function initSmoothScroll() {
-  if (lenis || prefersReducedMotion()) return null;
+  if (lenis || isTouch() || prefersReducedMotion()) return null;
 
   lenis = new Lenis({
     duration: 1.1,
@@ -39,15 +48,17 @@ export function initSmoothScroll() {
 /* The loader locks the page before Lenis exists, so the class and the Lenis
    instance have to be driven together — locking one way and releasing the
    other left `is-locked` (and its `overflow: hidden`) stuck on the body.
-   Desktop never noticed, because Lenis scrolls programmatically; touch
-   devices scroll natively and were frozen by it. */
+   The class goes on <html> as well as <body>: Safari only propagates the
+   lock to the viewport reliably when the root element carries it too. */
 export const stopScroll = () => {
   lenis?.stop();
+  document.documentElement.classList.add("is-locked");
   document.body.classList.add("is-locked");
 };
 
 export const startScroll = () => {
   lenis?.start();
+  document.documentElement.classList.remove("is-locked");
   document.body.classList.remove("is-locked");
 };
 

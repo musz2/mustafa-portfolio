@@ -59,14 +59,10 @@ export default function About() {
             </div>
             <div className="flex-col">
               <div className="single-about-image">
-                <div
-                  className="overlay overlay-image"
-                  role="img"
-                  aria-label="Syed Mustafa Ali"
-                  data-speed="-1.5"
-                  data-start="top bottom"
-                  data-end="bottom top"
-                />
+                {/* No parallax here: the drift needs the image to overhang its
+                    frame, and that overhang is exactly the resolution the shot
+                    can least afford. The column beside it still parallaxes. */}
+                <div className="overlay overlay-image" role="img" aria-label="Syed Mustafa Ali" />
               </div>
             </div>
           </div>

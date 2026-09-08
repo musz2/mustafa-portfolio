@@ -198,6 +198,16 @@
   transform: translate(-50%, -50%) scale(1, 1) rotate(0.001deg);
 }
 
+/* On touch these links measure 32–36px tall — under the 44px a thumb needs.
+   They stack vertically in the contact list, so the target is grown by
+   reserving the height rather than by overhanging a pseudo-element, which
+   would let each link swallow taps meant for the one above it. */
+@media (pointer: coarse) {
+  .btn-link.btn-link-external .btn-click {
+    min-height: 44px;
+  }
+}
+
 .theme-dark .btn-link.btn-link-external .btn-click::after {
   background: var(--color-white);
 }

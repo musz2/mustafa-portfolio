@@ -13,7 +13,7 @@ import ProjectPage from "./pages/ProjectPage";
 import NotFound from "./pages/NotFound";
 import { projectBySlug } from "./data/projects";
 import { site } from "./data/site";
-import { initSmoothScroll } from "./lib/smoothScroll";
+import { initSmoothScroll, startScroll } from "./lib/smoothScroll";
 import { initScrollEffects } from "./lib/scrollEffects";
 import { initMagnetic } from "./lib/magnetic";
 import { initCursor } from "./lib/cursor";
@@ -89,6 +89,11 @@ function Shell() {
     } else if (lastPath.current !== path) {
       lastPath.current = path;
       pageTransitionOut();
+    } else {
+      // Re-rendered on the same route, so no transition will run to release
+      // the curtain's lock. Clearing it here keeps a stray render from
+      // leaving the page unscrollable.
+      startScroll();
     }
 
     const onLoad = () => ScrollTrigger.refresh();
