@@ -12,7 +12,7 @@ import Contact from "./pages/Contact";
 import ProjectPage from "./pages/ProjectPage";
 import NotFound from "./pages/NotFound";
 import { projectBySlug } from "./data/projects";
-import { site } from "./data/site";
+import { greetings, site, type Greeting } from "./data/site";
 import { initSmoothScroll, startScroll } from "./lib/smoothScroll";
 import { initScrollEffects } from "./lib/scrollEffects";
 import { initMagnetic } from "./lib/magnetic";
@@ -47,7 +47,9 @@ function Shell() {
   const { open } = useNav();
   const mainRef = useRef<HTMLElement>(null);
   const lastPath = useRef<string | null>(null);
-  const [showGreetings, setShowGreetings] = useState(() => window.location.pathname === "/");
+  const [greeting, setGreeting] = useState<Greeting | null>(() =>
+    window.location.pathname === "/" ? greetings[0] : null
+  );
   const [scrolled, setScrolled] = useState(false);
   const [touch] = useState(isTouch);
 
@@ -70,8 +72,8 @@ function Shell() {
 
     if (lastPath.current === null) {
       lastPath.current = path;
-      const loader = path === "/" ? runHomeLoader() : runPageLoader();
-      loader.eventCallback("onComplete", () => setShowGreetings(false));
+      const loader = path === "/" ? runHomeLoader(setGreeting) : runPageLoader();
+      loader.eventCallback("onComplete", () => setGreeting(null));
     } else if (lastPath.current !== path) {
       lastPath.current = path;
       pageTransitionOut();
@@ -111,7 +113,7 @@ function Shell() {
       <a className="skip-link" href="#content" hidden={open}>
         Skip to content
       </a>
-      <LoadingScreen home={showGreetings} />
+      <LoadingScreen greeting={path === "/" ? greeting : null} />
       <main
         ref={mainRef}
         className={[

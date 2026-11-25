@@ -49,6 +49,8 @@ export const greetings = [
   { text: "Hello", script: false },
 ] as const;
 
+export type Greeting = (typeof greetings)[number];
+
 export const services = [
   {
     index: "01",

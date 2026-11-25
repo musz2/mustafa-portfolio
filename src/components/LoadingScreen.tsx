@@ -1,11 +1,11 @@
-import { greetings } from "../data/site";
+import type { Greeting } from "../data/site";
 import { useRouter } from "../router/Router";
 
 /**
  * The curtain. On a cold home load it cycles greetings; on every route change
  * it carries the name of the page being opened.
  */
-export default function LoadingScreen({ home }: { home: boolean }) {
+export default function LoadingScreen({ greeting }: { greeting: Greeting | null }) {
   const { transitionLabel } = useRouter();
 
   return (
@@ -15,22 +15,10 @@ export default function LoadingScreen({ home }: { home: boolean }) {
           <div className="rounded-div" />
         </div>
         <div className="loading-words">
-          {home ? (
-            greetings.map((greeting, index) => (
-              <h2
-                key={`${greeting.text}-${index}`}
-                className={greeting.script ? "script" : undefined}
-              >
-                {greeting.text}
-                <span className="dot" />
-              </h2>
-            ))
-          ) : (
-            <h2 className="active">
-              {transitionLabel}
-              <span className="dot" />
-            </h2>
-          )}
+          <h2 className={greeting?.script ? "script" : undefined}>
+            {greeting?.text ?? transitionLabel}
+            <span className="dot" />
+          </h2>
         </div>
         <div className="rounded-div-wrap bottom">
           <div className="rounded-div" />

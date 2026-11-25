@@ -1,3 +1,4 @@
+import { greetings, type Greeting } from "../data/site";
 import { gsap, isTouch, prefersReducedMotion } from "./gsap";
 import { startScroll, stopScroll } from "./smoothScroll";
 
@@ -5,7 +6,7 @@ const isSmall = () => window.innerWidth <= 540;
 const bottomHeight = () => (isSmall() ? "5vh" : "10vh");
 
 /** Cold start on the home page — the greetings cycle before the curtain lifts. */
-export function runHomeLoader() {
+export function runHomeLoader(showGreeting: (greeting: Greeting) => void) {
   const tl = gsap.timeline();
   if (isTouch()) tl.timeScale(2.2);
 
@@ -21,8 +22,6 @@ export function runHomeLoader() {
   tl.set(".loading-screen", { top: "0%" });
   tl.set("main .once-in", { y: isSmall() ? "10vh" : "50vh" });
   tl.set(".loading-words", { opacity: 0, y: -50 });
-  tl.set(".loading-words h2", { display: "block", opacity: 0 });
-  tl.set(".loading-words h2:first-child", { opacity: 1 });
   tl.set(".loading-screen .rounded-div-wrap.bottom", { height: bottomHeight() });
   tl.set("html", { cursor: "wait" });
 
@@ -34,27 +33,11 @@ export function runHomeLoader() {
     delay: 0.4,
   });
 
-  tl.to(
-    ".loading-words h2:not(:last-child)",
-    {
-      duration: 0.01,
-      opacity: 1,
-      stagger: 0.15,
-      ease: "none",
-      onStart: () => {
-        gsap.to(".loading-words h2:not(:last-child)", {
-          duration: 0.01,
-          opacity: 0,
-          stagger: 0.15,
-          ease: "none",
-          delay: 0.15,
-        });
-      },
-    },
-    "-=0.4"
-  );
-
-  tl.to(".loading-words h2:last-child", { duration: 0.01, opacity: 1, delay: 0.15 });
+  // Schedule each replacement on the curtain's clock, including its touch time scale.
+  const interval = isTouch() ? 0.33 : 0.15;
+  greetings.slice(1).forEach((greeting, index) => {
+    tl.call(() => showGreeting(greeting), [], 0.8 + (index + 1) * interval);
+  });
 
   tl.to(".loading-screen", {
     duration: 0.8,
