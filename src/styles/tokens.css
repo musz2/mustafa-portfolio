@@ -80,9 +80,9 @@
   }
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 1024px) {
   :root {
-    --section-padding: 12vh;
+    --section-padding: clamp(3rem, 9vw, 5rem);
   }
 }
 
@@ -91,7 +91,6 @@
     --color-border: rgba(28, 29, 32, 0.225);
     --color-border-light: rgba(255, 255, 255, 0.225);
     --container-padding: clamp(1.25em, 4vw, 2.5em);
-    --section-padding: max(2.5em, 12vh);
   }
 }
 
@@ -238,12 +237,12 @@ h4 {
 }
 
 h5 {
-  font-size: 0.6em;
+  font-size: 0.6875em;
   line-height: 1.065;
   margin-bottom: 1em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.5;
+  opacity: 0.72;
   font-weight: 500;
 }
 
@@ -414,6 +413,8 @@ video.overlay {
   transition: transform 0.25s cubic-bezier(0.7, 0, 0.3, 1);
 }
 
+#content:focus { outline: none; }
+
 .skip-link:focus {
   transform: translate(-50%, 0);
 }
@@ -425,7 +426,7 @@ video.overlay {
 
 @media screen and (max-width: 540px) {
   .section.full-height {
-    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100svh;
   }
 
   .container.medium,

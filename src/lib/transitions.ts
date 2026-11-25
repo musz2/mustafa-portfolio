@@ -1,4 +1,4 @@
-import { gsap, prefersReducedMotion } from "./gsap";
+import { gsap, isTouch, prefersReducedMotion } from "./gsap";
 import { startScroll, stopScroll } from "./smoothScroll";
 
 const isSmall = () => window.innerWidth <= 540;
@@ -7,6 +7,7 @@ const bottomHeight = () => (isSmall() ? "5vh" : "10vh");
 /** Cold start on the home page — the greetings cycle before the curtain lifts. */
 export function runHomeLoader() {
   const tl = gsap.timeline();
+  if (isTouch()) tl.timeScale(2.2);
 
   if (prefersReducedMotion()) {
     tl.set(".loading-screen", { top: "-100%" });
@@ -88,6 +89,7 @@ export function runHomeLoader() {
 /** Cold start on any inner page — same curtain, single word. */
 export function runPageLoader() {
   const tl = gsap.timeline();
+  if (isTouch()) tl.timeScale(2.2);
 
   if (prefersReducedMotion()) {
     tl.set(".loading-screen", { top: "-100%" });
@@ -127,8 +129,11 @@ export function runPageLoader() {
 }
 
 /** Curtain sweeps up over the outgoing page. */
+export const routeCoverMs = () => prefersReducedMotion() ? 0 : isTouch() ? 250 : 495;
+
 export function pageTransitionIn() {
   const tl = gsap.timeline();
+  if (isTouch()) tl.timeScale(2);
 
   if (prefersReducedMotion()) return tl;
 
@@ -174,6 +179,7 @@ export function pageTransitionIn() {
 /** Incoming page rises into place behind the curtain. */
 export function pageTransitionOut() {
   const tl = gsap.timeline();
+  if (isTouch()) tl.timeScale(2);
 
   if (prefersReducedMotion()) {
     tl.set("main .once-in", { y: 0, clearProps: "all" });

@@ -21,6 +21,7 @@ export function WorkRows({ items, shown, variant }: WorkRowsProps) {
       {items.map((project) => (
         <li
           key={project.slug}
+          hidden={shown && !shown(project)}
           data-index={indexOf(project)}
           className={!shown || shown(project) ? "visible" : undefined}
         >
@@ -70,6 +71,7 @@ export function WorkTiles({
       {items.map((project) => (
         <li
           key={project.slug}
+          hidden={shown && !shown(project)}
           className={!shown || shown(project) ? "visible" : undefined}
         >
           <div className="single-tile-wrap">

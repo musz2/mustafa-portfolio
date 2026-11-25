@@ -41,6 +41,9 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.btn-click:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.theme-dark .btn-click:focus-visible { outline-color: var(--color-white); }
+
 .btn-normal .btn-click {
   box-shadow: inset 0 0 0 1px var(--color-border);
 }
@@ -779,21 +782,25 @@ main .btn-hamburger.active {
   position: absolute;
   left: 0;
   top: 3.4em;
-  opacity: 0.33;
+  opacity: 0.64;
 }
 
-.form .field:focus {
-  outline: 0;
+.form-col:focus-within {
+  border-bottom-color: var(--color-white);
+}
+
+.form .field:focus-visible {
+  outline-offset: 2px;
 }
 
 .form .field::placeholder {
   color: var(--color-white);
-  opacity: 0.33;
+  opacity: 0.64;
   font-weight: 400;
 }
 
 .form textarea.field {
-  resize: none;
+  resize: vertical;
 }
 
 .form .label {
@@ -807,7 +814,7 @@ main .btn-hamburger.active {
 }
 
 .form .form-col.not-empty .label {
-  opacity: 0.33;
+  opacity: 0.64;
 }
 
 .form-btn {

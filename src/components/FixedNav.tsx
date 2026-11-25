@@ -14,11 +14,14 @@ export default function FixedNav() {
         type="button"
         className="overlay fixed-nav-back"
         aria-label="Close menu"
-        tabIndex={open ? 0 : -1}
+        tabIndex={-1}
+        aria-hidden="true"
         onClick={close}
       />
       <nav
         className="fixed-nav theme-dark"
+        id="site-navigation"
+        data-lenis-prevent
         aria-label="Main"
         aria-hidden={!open}
         {...(open ? {} : { inert: "" })}

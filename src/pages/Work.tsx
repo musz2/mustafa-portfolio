@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import { BtnToggle } from "../components/Btn";
 import { WorkRows, WorkTiles } from "../components/WorkList";
 import { filters, projects, type FilterId, type Project } from "../data/projects";
-import { ScrollTrigger } from "../lib/gsap";
+import { ScrollTrigger, prefersReducedMotion } from "../lib/gsap";
 import { scrollToTop, startScroll, stopScroll } from "../lib/smoothScroll";
 
 type View = "rows" | "columns";
@@ -28,7 +28,9 @@ const ColumnsIcon = () => (
 );
 
 export default function Work() {
-  const [filter, setFilter] = useState<FilterId>("all");
+  const [filter, setFilter] = useState<FilterId>(() =>
+    filters.find((item) => item.id === window.history.state?.workFilter)?.id ?? "all"
+  );
   const [view, setView] = useState<View>(() => {
     try {
       return localStorage.getItem(VIEW_KEY) === "columns" ? "columns" : "rows";
@@ -43,6 +45,7 @@ export default function Work() {
   useEffect(
     () => () => {
       timers.current.forEach(window.clearTimeout);
+      startScroll("filter");
     },
     []
   );
@@ -55,8 +58,16 @@ export default function Work() {
     timers.current.forEach(window.clearTimeout);
     timers.current = [];
 
+    if (window.matchMedia("(max-width: 1024px)").matches || prefersReducedMotion()) {
+      apply();
+      setPhase("");
+      startScroll("filter");
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+      return;
+    }
+
     setPhase("out");
-    stopScroll();
+    stopScroll("filter");
 
     timers.current.push(
       window.setTimeout(() => {
@@ -67,14 +78,17 @@ export default function Work() {
       window.setTimeout(() => {
         setPhase("");
         ScrollTrigger.refresh();
-        startScroll();
+        startScroll("filter");
       }, 700)
     );
   }, []);
 
   const chooseFilter = (next: FilterId) => {
     if (next === filter) return;
-    swap(() => setFilter(next));
+    swap(() => {
+      window.history.replaceState({ ...window.history.state, workFilter: next }, "");
+      setFilter(next);
+    });
   };
 
   const chooseView = (next: View) => {

@@ -11,7 +11,7 @@ const links = [
 /** Fixed-position top bar: signature on the left, links on the right. */
 export default function NavBar() {
   const { path } = useRouter();
-  const { toggle } = useNav();
+  const { open, toggle } = useNav();
 
   return (
     <div className="nav-bar">
@@ -56,6 +56,8 @@ export default function NavBar() {
             className="btn-click magnetic"
             data-strength="20"
             data-strength-text="10"
+            aria-controls="site-navigation"
+            aria-expanded={open}
             onClick={toggle}
           >
             <span className="btn-text">

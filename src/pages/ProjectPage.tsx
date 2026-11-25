@@ -45,7 +45,7 @@ function Block({
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="none"
         aria-label={item.alt}
       />
     </div>

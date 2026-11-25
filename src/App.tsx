@@ -53,20 +53,6 @@ function Shell() {
 
   const route = resolve(path);
 
-  /* --- Viewport unit that survives mobile browser chrome ------------------ */
-  useEffect(() => {
-    const setVh = () => {
-      document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
-    };
-    setVh();
-    window.addEventListener("resize", setVh);
-    window.addEventListener("orientationchange", setVh);
-    return () => {
-      window.removeEventListener("resize", setVh);
-      window.removeEventListener("orientationchange", setVh);
-    };
-  }, []);
-
   /* --- One smooth-scroll instance for the session ------------------------- */
   useEffect(() => {
     const stop = initSmoothScroll();
@@ -122,7 +108,7 @@ function Shell() {
 
   return (
     <>
-      <a className="skip-link" href="#content">
+      <a className="skip-link" href="#content" hidden={open}>
         Skip to content
       </a>
       <LoadingScreen home={showGreetings} />
@@ -138,10 +124,10 @@ function Shell() {
           .join(" ")}
         id={route.key}
       >
-        <Cursor />
-        <Hamburger />
+        {!touch && <Cursor />}
+        <Hamburger scrolled={scrolled} />
         <FixedNav />
-        <div className="main-wrap" id="content" key={route.key}>
+        <div className="main-wrap" id="content" tabIndex={-1} key={route.key} {...(open ? { inert: "" } : {})}>
           {route.node}
         </div>
       </main>

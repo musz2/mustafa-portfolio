@@ -119,6 +119,7 @@ export default function Home() {
 
       <section className="section work-tiles work-tiles-home">
         <div className="container">
+          <h2>Recent work</h2>
           <WorkTiles items={featured.slice(0, 2)} />
         </div>
       </section>

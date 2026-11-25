@@ -51,7 +51,7 @@ export function SmartLink({
       data-strength-text={magnetic ? strengthText : undefined}
       aria-label={ariaLabel}
       onClick={onClick}
-      {...(internal ? {} : { target: "_blank", rel: "noreferrer" })}
+      {...(internal || /^(mailto|tel):/.test(href) ? {} : { target: "_blank", rel: "noreferrer" })}
     >
       {children}
     </a>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { gsap, ScrollTrigger, prefersReducedMotion } from "../lib/gsap";
+import { gsap, ScrollTrigger } from "../lib/gsap";
 import { site } from "../data/site";
 
 /**
@@ -13,29 +13,23 @@ export default function RollingName() {
 
   useEffect(() => {
     const el = track.current;
-    if (!el || prefersReducedMotion()) return;
+    if (!el) return;
+    const media = gsap.matchMedia();
+    media.add("(prefers-reduced-motion: no-preference)", () => {
+      const tl = gsap.fromTo(el, { xPercent: 0 }, {
+        xPercent: -50, duration: 26, ease: "none", repeat: -1,
+        onReverseComplete: () => { tl.totalTime(tl.duration() * 100); },
+      });
 
-    const tl = gsap.to(el, {
-      xPercent: -50,
-      duration: 26,
-      ease: "none",
-      repeat: -1,
+      ScrollTrigger.create({
+        trigger: el.closest("header"),
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => { tl.paused(!self.isActive); },
+        onUpdate: (self) => { tl.timeScale(self.direction); },
+      });
     });
-
-    let direction = 1;
-    const trigger = ScrollTrigger.create({
-      onUpdate(self) {
-        if (self.direction !== direction) {
-          direction = self.direction;
-          gsap.to(tl, { timeScale: direction, duration: 0.4, overwrite: true });
-        }
-      },
-    });
-
-    return () => {
-      trigger.kill();
-      tl.kill();
-    };
+    return () => media.revert();
   }, []);
 
   const label = (

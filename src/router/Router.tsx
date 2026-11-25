@@ -3,13 +3,14 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type PropsWithChildren,
 } from "react";
-import { delay, pageTransitionIn } from "../lib/transitions";
-import { scrollToTop } from "../lib/smoothScroll";
+import { delay, pageTransitionIn, routeCoverMs } from "../lib/transitions";
+import { setScrollPosition, startScroll } from "../lib/smoothScroll";
 
 interface RouterValue {
   path: string;
@@ -26,32 +27,51 @@ const normalise = (path: string) =>
 export function RouterProvider({ children }: PropsWithChildren) {
   const [path, setPath] = useState(() => normalise(window.location.pathname));
   const [transitionLabel, setTransitionLabel] = useState("Home");
-  const busy = useRef(false);
-  /* `go` is created once, so the path it compares against lives in a ref.
-     A popstate that lands on the page already showing (Safari fires them on
-     restore) has to bail here: the curtain locks scrolling on the way in and
-     only the incoming page's transition releases it, so a navigation that
-     never changes the route would leave the lock on for good. */
   const current = useRef(path);
+  const entry = useRef<number>(window.history.state?.portfolioEntry ?? 0);
+  const positions = useRef(new Map<number, number>());
+  const destinationScroll = useRef<number | null>(null);
+  const generation = useRef(0);
+  const pending = useRef(false);
+  const curtain = useRef<ReturnType<typeof pageTransitionIn> | null>(null);
+
+  useLayoutEffect(() => {
+    if (destinationScroll.current === null) return;
+    setScrollPosition(destinationScroll.current);
+    destinationScroll.current = null;
+    document.getElementById("content")?.focus({ preventScroll: true });
+  }, [path]);
 
   const go = useCallback(async (to: string, label: string, push: boolean) => {
     const next = normalise(to);
-    if (busy.current) return;
-    if (next === current.current) return;
+    if (push && (pending.current || next === current.current)) return;
+    const request = ++generation.current;
+    if (next === current.current) {
+      pending.current = false;
+      startScroll();
+      return;
+    }
 
-    busy.current = true;
+    pending.current = true;
+    positions.current.set(entry.current, window.scrollY);
     setTransitionLabel(label);
-
-    // Give the curtain a frame with the new word before it sweeps up.
     await delay(20);
-    pageTransitionIn();
-    await delay(495);
+    if (request !== generation.current) return;
+    curtain.current?.kill();
+    curtain.current = pageTransitionIn();
+    await delay(routeCoverMs());
+    if (request !== generation.current) return;
 
-    if (push) window.history.pushState({}, "", next);
+    if (push) {
+      entry.current = Date.now();
+      window.history.pushState({ portfolioEntry: entry.current }, "", next);
+    } else {
+      entry.current = window.history.state?.portfolioEntry ?? 0;
+    }
+    destinationScroll.current = push ? 0 : positions.current.get(entry.current) ?? 0;
     current.current = next;
     setPath(next);
-    scrollToTop();
-    busy.current = false;
+    pending.current = false;
   }, []);
 
   const navigate = useCallback(
@@ -62,11 +82,16 @@ export function RouterProvider({ children }: PropsWithChildren) {
   );
 
   useEffect(() => {
+    const restoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
     const onPop = () => {
       void go(window.location.pathname, "Loading", false);
     };
     window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+    return () => {
+      window.history.scrollRestoration = restoration;
+      window.removeEventListener("popstate", onPop);
+    };
   }, [go]);
 
   const value = useMemo(

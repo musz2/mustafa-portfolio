@@ -50,21 +50,29 @@ export function initSmoothScroll() {
    other left `is-locked` (and its `overflow: hidden`) stuck on the body.
    The class goes on <html> as well as <body>: Safari only propagates the
    lock to the viewport reliably when the root element carries it too. */
-export const stopScroll = () => {
+type ScrollOwner = "transition" | "menu" | "filter";
+const locks = new Set<ScrollOwner>();
+
+export const stopScroll = (owner: ScrollOwner = "transition") => {
+  locks.add(owner);
   lenis?.stop();
   document.documentElement.classList.add("is-locked");
   document.body.classList.add("is-locked");
 };
 
-export const startScroll = () => {
+export const startScroll = (owner: ScrollOwner = "transition") => {
+  locks.delete(owner);
+  if (locks.size) return;
   lenis?.start();
   document.documentElement.classList.remove("is-locked");
   document.body.classList.remove("is-locked");
 };
 
-export const scrollToTop = () => {
-  if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
-  window.scrollTo(0, 0);
+export const setScrollPosition = (top: number) => {
+  if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+  window.scrollTo(0, top);
 };
+
+export const scrollToTop = () => setScrollPosition(0);
 
 export const isSmoothScrollRunning = () => rafId !== 0;

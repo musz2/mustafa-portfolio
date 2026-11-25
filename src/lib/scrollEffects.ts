@@ -1,4 +1,4 @@
-import { gsap, ScrollTrigger, prefersReducedMotion } from "./gsap";
+import { gsap, ScrollTrigger } from "./gsap";
 
 type Ctx = { revert: () => void };
 
@@ -27,16 +27,22 @@ function splitWords(root: HTMLElement) {
  * arrows that rotate as you pass them.
  */
 export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx {
-  splitWords(root);
-
-  const ctx = gsap.context(() => {
-    const reduced = prefersReducedMotion();
+  const media = gsap.matchMedia();
+  media.add({
+    compact: "(max-width: 1024px)",
+    wide: "(min-width: 1025px)",
+    reduced: "(prefers-reduced-motion: reduce)",
+    driftRows: "(min-width: 541px)",
+    largeHero: "(min-width: 721px)",
+  }, (context) => {
+    const { compact, reduced, driftRows, largeHero } = context.conditions!;
+    if (!compact && !reduced) splitWords(root);
 
     /* --- Parallax ------------------------------------------------------- */
     if (!reduced) {
       gsap.utils.toArray<HTMLElement>("[data-speed]").forEach((el) => {
         const speed = parseFloat(el.dataset.speed || "0");
-        if (!speed) return;
+        if (!speed || (compact && el.closest(".home-header, .footer, .about-image"))) return;
         const horizontal = el.dataset.direction === "horizontal";
         // Expressed in vh so the throw scales with the viewport, the way the
         // reference's scroll-speed values behave.
@@ -44,9 +50,9 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
 
         gsap.fromTo(
           el,
-          horizontal ? { x: 0 } : { y: 0 },
+          horizontal ? { x: 0 } : { y: el.matches(".footer") ? distance : 0 },
           {
-            [horizontal ? "x" : "y"]: distance,
+            [horizontal ? "x" : "y"]: el.matches(".footer") ? 0 : distance,
             ease: "none",
             scrollTrigger: {
               trigger: el.dataset.trigger
@@ -62,55 +68,26 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
       });
     }
 
-    /* --- Masked word reveal --------------------------------------------- */
-    gsap.utils.toArray<HTMLElement>(".span-lines.animate").forEach((el) => {
-      const targets = el.querySelectorAll(".span-line-inner");
-      if (!targets.length) return;
-      gsap.from(targets, {
-        y: reduced ? 0 : "100%",
-        opacity: reduced ? 0 : 1,
-        stagger: 0.012,
-        ease: "power3.out",
-        duration: 1,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 100%",
-          end: "bottom top",
-          toggleActions: "play none none reset",
-        },
+    if (!reduced) {
+      gsap.utils.toArray<HTMLElement>(".span-lines.animate, .fade-in.animate").forEach((el) => {
+        const words = !compact && el.querySelectorAll(".span-line-inner");
+        gsap.from(words && words.length ? words : el, {
+          y: words && words.length ? "100%" : "0.5em",
+          opacity: words && words.length ? 1 : 0,
+          duration: compact ? 0.45 : 0.9,
+          stagger: compact ? 0 : 0.012,
+          ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top bottom", once: true },
+        });
       });
-    });
 
-    /* --- Fade in --------------------------------------------------------- */
-    gsap.utils.toArray<HTMLElement>(".fade-in.animate").forEach((el) => {
-      gsap.from(el, {
-        y: reduced ? 0 : "2em",
-        opacity: 0,
-        ease: "expo.out",
-        duration: 1.75,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 110%",
-          end: "bottom top",
-          toggleActions: "play none none reset",
-        },
+      gsap.utils.toArray<HTMLElement>(".stripe.animate").forEach((el) => {
+        gsap.from(el, {
+          scaleX: 0, transformOrigin: "left center", ease: "expo.out", duration: 1.4,
+          scrollTrigger: { trigger: el, start: "top bottom", once: true },
+        });
       });
-    });
-
-    /* --- Stripes draw in -------------------------------------------------- */
-    gsap.utils.toArray<HTMLElement>(".stripe.animate").forEach((el) => {
-      gsap.from(el, {
-        scaleX: 0,
-        transformOrigin: "left center",
-        ease: "expo.out",
-        duration: 1.4,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 100%",
-          toggleActions: "play none none reset",
-        },
-      });
-    });
+    }
 
     /* --- Site recordings play only while they are on screen ---------------
        Off-screen video is wasted decode work, so each one starts on enter
@@ -119,6 +96,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
       const video = wrap.querySelector("video");
       if (!video) return;
 
+      video.controls = Boolean(reduced);
       if (reduced) {
         video.pause();
         return;
@@ -144,7 +122,9 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
     /* --- Hamburger appears once you've scrolled --------------------------- */
     ScrollTrigger.create({
       start: "top -30%",
-      onToggle: (self) => options.onScrolled?.(self.isActive),
+      end: "max",
+      onUpdate: (self) => options.onScrolled?.(self.scroll() >= self.start),
+      onRefresh: (self) => options.onScrolled?.(self.scroll() >= self.start),
     });
 
     if (reduced) return;
@@ -183,7 +163,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
     /* --- Header arrow rotates through the hero ----------------------------- */
     const homeHeader = document.querySelector(".home-header");
     const homeArrow = document.querySelector(".home-header .arrow");
-    if (homeHeader && homeArrow && window.innerWidth > 720) {
+    if (homeHeader && homeArrow && !compact) {
       gsap.to(homeArrow, {
         rotate: 90,
         ease: "none",
@@ -199,7 +179,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
     /* --- About: arrow tilt + ground shifts to light grey -------------------- */
     const aboutImage = document.querySelector(".about-image .single-about-image");
     const aboutArrow = document.querySelector(".about-image .arrow");
-    if (aboutImage && aboutArrow && window.innerWidth > 720) {
+    if (aboutImage && aboutArrow && largeHero) {
       gsap.to(aboutArrow, {
         rotate: 60,
         ease: "none",
@@ -213,7 +193,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
     }
 
     const aboutServices = document.querySelector(".about-services");
-    if (aboutServices && window.innerWidth > 720) {
+    if (aboutServices && largeHero) {
       const grounds = document.querySelectorAll(
         ".about-header, .line-globe, .about-image, .about-services"
       );
@@ -235,7 +215,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
 
     /* --- The orbit mark keeps turning as you scroll ------------------------- */
     const globes = document.querySelectorAll(".digital-ball .globe");
-    if (globes.length && window.innerWidth > 720) {
+    if (globes.length && largeHero) {
       gsap.to(globes, {
         rotate: 90,
         ease: "none",
@@ -250,7 +230,7 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
 
     /* --- Home: the two rows of tiles drift in opposite directions ----------- */
     const drift = document.querySelector(".horizontal-items");
-    if (drift && window.innerWidth > 540) {
+    if (drift && driftRows) {
       gsap.fromTo(
         drift.querySelector(".row-1"),
         { x: "-6vw" },
@@ -274,10 +254,5 @@ export function initScrollEffects(root: HTMLElement, options: Options = {}): Ctx
 
   ScrollTrigger.refresh();
 
-  return {
-    revert: () => {
-      ctx.revert();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    },
-  };
+  return { revert: () => media.revert() };
 }

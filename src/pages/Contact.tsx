@@ -37,7 +37,11 @@ export default function Contact() {
     if (!fields.message.trim()) next.message = "Please add a short message.";
 
     setErrors(next);
-    if (Object.keys(next).length) return;
+    const firstInvalid = Object.keys(next)[0];
+    if (firstInvalid) {
+      document.getElementById(`form-${firstInvalid}`)?.focus();
+      return;
+    }
 
     const body = [
       `Name: ${fields.name}`,
@@ -135,6 +139,8 @@ export default function Contact() {
                         placeholder={row.placeholder}
                         value={fields[row.key]}
                         onChange={set(row.key)}
+                        required={["name", "email", "message"].includes(row.key)}
+                        aria-describedby={errors[row.key] ? `error-${row.key}` : undefined}
                         aria-invalid={Boolean(errors[row.key])}
                       />
                     ) : (
@@ -143,14 +149,17 @@ export default function Contact() {
                         id={`form-${row.key}`}
                         name={row.key}
                         type={row.type ?? "text"}
+                        autoComplete={row.key === "company" ? "organization" : row.key === "service" ? undefined : row.key}
                         placeholder={row.placeholder}
                         value={fields[row.key]}
                         onChange={set(row.key)}
+                        required={["name", "email", "message"].includes(row.key)}
+                        aria-describedby={errors[row.key] ? `error-${row.key}` : undefined}
                         aria-invalid={Boolean(errors[row.key])}
                       />
                     )}
                     {errors[row.key] && (
-                      <div className="alert" role="alert">
+                      <div className="alert" id={`error-${row.key}`} role="alert">
                         <p>{errors[row.key]}</p>
                       </div>
                     )}
